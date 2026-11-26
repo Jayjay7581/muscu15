@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Muscu 15</title>
+<style>
+:root{--bg:#eef2f7;--card:#fff;--ink:#0f2a43;--mut:#9fb0c3;--acc:#ff7a1a;--ok:#1fa97a;--blue:#3a86ff;--line:#d9e1ea}
+@media(prefers-color-scheme:dark){:root{--bg:#0c1824;--card:#142536;--ink:#e8eef5;--mut:#5d7389;--line:#223548}}
+*{box-sizing:border-box;margin:0}html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+main{max-width:520px;margin:auto;padding:16px 14px 90px}
+h1{font-size:26px;font-weight:800}h2{font-size:18px;margin:18px 0 8px}
+.sub{color:var(--mut);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+.ex{display:flex;gap:12px;align-items:center}.ex svg{width:110px;flex:none;background:var(--bg);border-radius:10px}
+.ex b{display:block}.ex span{font-size:14px;color:var(--mut)}
+svg line,svg path,svg circle,svg rect{stroke:var(--ink);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;fill:none}
+svg .m{stroke:var(--mut);stroke-width:4}svg .a{stroke:var(--acc);opacity:.55}
+button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:14px;width:100%;background:var(--acc);color:#fff;margin:6px 0}
+button.s{background:var(--card);color:var(--ink);border:1px solid var(--line)}button.ok{background:var(--ok)}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav a{flex:1;text-align:center;padding:14px 4px;font-weight:700;color:var(--mut)}nav a.on{color:var(--acc);box-shadow:inset 0 3px var(--acc)}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--blue)}
+.st{display:flex;gap:8px}.st div{flex:1;text-align:center}.st b{font-size:26px;display:block}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:8px}.cal i{aspect-ratio:1;border-radius:8px;background:var(--line);font:12px/2.4 system-ui;text-align:center;font-style:normal}
+.cal i.d{background:var(--ok);color:#fff}.cal i.t{outline:2px solid var(--acc)}
+.cur{border-color:var(--acc);border-width:2px}
+.mo{display:flex;align-items:flex-end;gap:4px;height:70px;margin-top:8px}.mo i{flex:1;background:var(--blue);border-radius:4px 4px 0 0;min-height:3px}
+#tm{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;z-index:9}
+#tm.on{display:flex}#tm .n{font-size:30px;font-weight:800}#tm .c{font-size:110px;font-weight:800;line-height:1}
+#tm svg{width:230px;margin:10px}#tm.r{background:var(--blue);color:#fff}#tm.r svg *{stroke:#fff}
+#tm .bar{width:100%;max-width:400px;margin:14px 0}#tm button{max-width:400px}
+</style></head><body><main id="v"></main>
+<nav><a data-t="j">Aujourd'hui</a><a data-t="p">Programme</a><a data-t="s">Suivi</a></nav>
+<div id="tm"><div class="sub" id="tp"></div><div class="n" id="tn"></div><div class="c" id="tc"></div><div id="ti"></div><div class="sub" id="tt"></div><div class="bar"><i id="tb"></i></div>
+<button id="bp" class="s">Pause</button><button id="bs" class="s">Passer</button><button id="bq" class="s">Quitter</button></div>
+<script>
+const F='<line class="m" x1="5" y1="108" x2="195" y2="108"/>',S=c=>`<svg viewBox="0 0 200 120">${F}${c}</svg>`;
+const BED='<rect class="m" x="138" y="72" width="58" height="36"/>';
+const EX=[
+{n:"Assis-debout",svg:S('<path class="m" d="M40 48V76H72M44 76V108M70 76V108"/><circle cx="58" cy="36" r="8"/><path d="M58 46V76H86V106"/><circle class="a" cx="140" cy="26" r="8"/><path class="a" d="M140 36V74M140 74L130 106M140 74L150 106"/>'),
+ v:["Descente lente, bras croisés","Descente de 3 s, sans les mains","Une jambe, main sur le lit en appui","Une jambe, descente de 3 s"]},
+{n:"Pompes inclinées",svg:S(BED+'<circle cx="150" cy="50" r="7"/><path d="M26 106L82 82L136 62L146 74"/>'),
+ v:["Mains sur le lit","Mains sur le lit, descente de 3 s","Mains sur la chaise (calée au mur)","Mains sur la chaise, descente de 3 s"]},
+{n:"Pont fessier",svg:S('<rect class="m" x="8" y="76" width="62" height="32"/><circle cx="52" cy="66" r="7"/><path d="M60 74L106 58L138 76L146 106"/><path class="a" d="M60 76L108 78L138 76"/>'),
+ v:["Monte le bassin, serre 1 s","Tiens 2 s en haut","Une jambe levée, en alternant","Une jambe, tenue 2 s"]},
+{n:"Dips sur chaise",svg:S('<path class="m" d="M118 76H176M122 76V108M172 76V108"/><circle cx="106" cy="40" r="7"/><path d="M108 52L104 86L138 84L142 106M108 52L122 74"/>'),
+ v:["Genoux fléchis, petite amplitude","Genoux fléchis, amplitude complète","Jambes mi-tendues","Jambes tendues, descente de 3 s"]},
+{n:"Gainage incliné",svg:S(BED+'<circle cx="150" cy="50" r="7"/><path d="M26 106L136 62L146 74"/>'),
+ v:["Mains sur le lit, corps droit","Mains sur la chaise, corps droit","Avant-bras sur le lit","Avant-bras sur la chaise"]},
+{n:"Superman sur le lit",svg:S('<rect class="m" x="14" y="72" width="172" height="36"/><circle cx="50" cy="52" r="7"/><path d="M58 62H122L176 48M58 62L24 50"/>'),
+ v:["Bras et jambes ensemble","Tiens 2 s en haut","Bras et jambe opposés, en alternant","Tiens 3 s en haut"]}];
+const PH=[{m:"Mois 1-2",a:0,b:2,e:30,r:15,t:2,w:180,s:180},{m:"Mois 3-5",a:2,b:5,e:40,r:15,t:2,w:120,s:120},{m:"Mois 6-8",a:5,b:8,e:45,r:15,t:2,w:90,s:90},{m:"Mois 9-12",a:8,b:12,e:50,r:10,t:2,w:90,s:90}];
+let D={start:null,done:[]};try{D=JSON.parse(localStorage.getItem("m15"))||D}catch(e){}
+const save=()=>{try{localStorage.setItem("m15",JSON.stringify(D))}catch(e){}};
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const today=ymd(new Date());if(!D.start){D.start=today;save()}
+const mois=Math.floor((new Date(today)-new Date(D.start))/(30.44*864e5));
+const pi=Math.max(0,PH.findIndex(p=>mois<p.b)<0?3:PH.findIndex(p=>mois<p.b)),P=PH[pi];
+const isDone=D.done.includes(today);
+const set=()=>{if(isDone)D.done=D.done.filter(x=>x!==today);else D.done.push(today);save();go(tab)};
+let tab="j";
+function streak(){let n=0,d=new Date();if(!D.done.includes(ymd(d)))d.setDate(d.getDate()-1);while(D.done.includes(ymd(d))){n++;d.setDate(d.getDate()-1)}return n}
+function J(){return`<h1>Séance du jour</h1><p class="sub">${P.m} · mois ${Math.min(mois+1,12)}/12 · ${P.t} tours · ${P.e} s effort / ${P.r} s repos · 15 min</p>
+<button onclick="run()">Lancer la séance</button><button class="${isDone?'ok':'s'}" onclick="set()">${isDone?'✓ Séance faite aujourd\'hui':'Marquer comme faite'}</button>
+${EX.map(x=>`<div class="card ex">${x.svg}<div><b>${x.n}</b><span>${x.v[pi]}</span></div></div>`).join("")}
+<p class="sub">Échauffement ${P.w/60} min au début, étirements ${P.s/60} min à la fin. Chaise calée contre le mur.</p>`}
+function Pg(){return`<h1>Programme sur 12 mois</h1><p class="sub">Même durée, exercices plus durs à chaque étape.</p>`+PH.map((p,i)=>`<div class="card ${i==pi?'cur':''}"><b>${p.m}</b> <span class="sub">${p.t} tours · ${p.e} s / ${p.r} s</span><ul style="padding-left:18px;margin-top:6px;font-size:14px">${EX.map(x=>`<li><b>${x.n}</b> : ${x.v[i]}</li>`).join("")}</ul></div>`).join("")}
+function Su(){const n=new Date(),y=n.getFullYear(),mo=n.getMonth(),dm=new Date(y,mo+1,0).getDate(),off=(new Date(y,mo,1).getDay()+6)%7;
+let c="";for(let i=0;i<off;i++)c+="<i></i>";for(let d=1;d<=dm;d++){const k=y+"-"+String(mo+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");c+=`<i class="${D.done.includes(k)?'d':''} ${k==today?'t':''}">${d}</i>`}
+const cnt=Array(12).fill(0);D.done.forEach(k=>{const m=Math.floor((new Date(k)-new Date(D.start))/(30.44*864e5));if(m>=0&&m<12)cnt[m]++});const mx=Math.max(1,...cnt);
+return`<h1>Suivi</h1><div class="card st"><div><b>${streak()}</b>jours de suite</div><div><b>${D.done.length}</b>séances</div><div><b>${D.done.length*15}</b>minutes</div></div>
+<div class="card"><b>Année : mois ${Math.min(mois+1,12)}/12</b><div class="bar" style="margin-top:8px"><i style="width:${Math.min(100,(new Date(today)-new Date(D.start))/(365*864e5)*100)}%"></i></div></div>
+<div class="card"><b>${n.toLocaleDateString("fr-FR",{month:"long",year:"numeric"})}</b><div class="cal">${c}</div></div>
+<div class="card"><b>Séances par mois du programme</b><div class="mo">${cnt.map(v=>`<i style="height:${v/mx*100}%" title="${v}"></i>`).join("")}</div></div>
+<button class="s" onclick="if(confirm('Recommencer le programme à zéro ?')){D={start:today,done:[]};save();location.reload()}">Recommencer le programme</button>`}
+function go(t){tab=t;v.innerHTML={j:J,p:Pg,s:Su}[t]();document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("on",a.dataset.t==t))}
+document.querySelectorAll("nav a").forEach(a=>a.onclick=()=>go(a.dataset.t));go("j");
+/* minuteur */
+let ST=[],si=0,left=0,iv=null,pause=false,AC;
+function beep(f,d){try{AC=AC||new AudioContext();const o=AC.createOscillator();o.frequency.value=f;o.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}if(navigator.vibrate)navigator.vibrate(d*1000)}
+function build(){const o=[{n:"Échauffement",d:P.w,k:"w",t:"Marche sur place, rotations des épaules et des hanches, genoux hauts lents."}],l=[];
+for(let t=1;t<=P.t;t++)EX.forEach((x,i)=>l.push({n:x.n,d:P.e,k:"e",svg:x.svg,t:x.v[pi],p:`Tour ${t}/${P.t}`}));
+l.forEach((s,i)=>{o.push(s);o.push({n:"Repos",d:P.r,k:"r",t:"Suivant : "+(l[i+1]?l[i+1].n:"étirements")})});
+o.pop();o.push({n:"Étirements",d:P.s,k:"w",t:"Cuisses, fessiers, pectoraux contre le mur, dos assis sur la chaise."});return o}
+function show(){const s=ST[si];tm.className="on"+(s.k=="r"?" r":"");tp.textContent=s.p||`Étape ${si+1}/${ST.length}`;tn.textContent=s.n;ti.innerHTML=s.svg||"";tt.textContent=s.t;left=s.d;tick()}
+function tick(){const m=Math.floor(left/60),s=left%60;tc.textContent=m?m+":"+String(s).padStart(2,"0"):left;tb.style.width=(100-left/ST[si].d*100)+"%"}
+function next(){if(++si>=ST.length){clearInterval(iv);tm.className="";if(!D.done.includes(today)){D.done.push(today);save()}beep(880,.6);go("s");return}beep(660,.25);show()}
+function run(){ST=build();si=0;pause=false;bp.textContent="Pause";show();clearInterval(iv);iv=setInterval(()=>{if(pause)return;left--;if(left<=3&&left>0)beep(500,.1);if(left<=0)next();else tick()},1000)}
+bp.onclick=()=>{pause=!pause;bp.textContent=pause?"Reprendre":"Pause"};bs.onclick=next;
+bq.onclick=()=>{if(confirm("Arrêter la séance ?")){clearInterval(iv);tm.className=""}};
+</script></body></html>
