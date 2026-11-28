@@ -76,7 +76,9 @@ document.querySelectorAll("nav a").forEach(a=>a.onclick=()=>go(a.dataset.t));go(
 let ST=[],si=0,left=0,iv=null,pause=false,AC;
 function beep(f,d){try{AC=AC||new AudioContext();const o=AC.createOscillator();o.frequency.value=f;o.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}if(navigator.vibrate)navigator.vibrate(d*1000)}
 const V="speechSynthesis" in window;
-function say(t){if(!t||!V)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="fr-FR";u.rate=1.05;speechSynthesis.speak(u)}catch(e){}}
+const NT=()=>window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.TextToSpeech;
+function say(t){if(!t)return;const T=NT();if(T){try{T.speak({text:t,lang:"fr-FR",rate:1.05}).catch(()=>{})}catch(e){}return}if(!V)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="fr-FR";u.rate=1.05;speechSynthesis.speak(u)}catch(e){}}
+function stopSay(){const T=NT();try{if(T)T.stop().catch(()=>{});else if(V)speechSynthesis.cancel()}catch(e){}}
 let WL=null;async function wl(on){try{if(on){if(navigator.wakeLock&&!WL){WL=await navigator.wakeLock.request("screen");WL.addEventListener("release",()=>{WL=null})}}else if(WL){await WL.release();WL=null}}catch(e){}}
 function build(){const o=[{n:"Échauffement",d:P.w,k:"w",v:"Échauffement. Commence.",t:"Marche sur place, rotations des épaules et des hanches, genoux hauts lents."}],l=[];
 for(let t=1;t<=P.t;t++)EX.forEach((x,i)=>l.push({n:x.n,d:P.e,k:"e",svg:x.svg,t:x.v[pi],p:`Tour ${t}/${P.t}`,v:"Commence."}));
@@ -85,8 +87,8 @@ o.push({n:"Étirements",d:P.s,k:"w",v:"Étirements. Commence.",t:"Cuisses, fessi
 function show(){const s=ST[si];tm.className="on"+(s.k=="r"?" r":"");tp.textContent=s.p||`Étape ${si+1}/${ST.length}`;tn.textContent=s.n;ti.innerHTML=s.svg||"";tt.textContent=s.t;left=s.d;tick();say(s.v)}
 function tick(){const m=Math.floor(left/60),s=left%60;tc.textContent=m?m+":"+String(s).padStart(2,"0"):left;tb.style.width=(100-left/ST[si].d*100)+"%"}
 function next(){if(++si>=ST.length){clearInterval(iv);tm.className="";wl(false);say("Séance terminée. Bravo !");if(!D.done.includes(today)){D.done.push(today);save()}beep(880,.6);go("s");return}beep(660,.25);show()}
-function run(){ST=build();si=0;pause=false;bp.textContent="Pause";wl(true);show();clearInterval(iv);iv=setInterval(()=>{if(pause)return;left--;if(left<=3&&left>0){V?say(String(left)):beep(500,.1)}if(left<=0)next();else tick()},1000)}
+function run(){ST=build();si=0;pause=false;bp.textContent="Pause";wl(true);show();clearInterval(iv);iv=setInterval(()=>{if(pause)return;left--;if(left<=3&&left>0){beep(500,.1);say(String(left))}if(left<=0)next();else tick()},1000)}
 bp.onclick=()=>{pause=!pause;bp.textContent=pause?"Reprendre":"Pause"};bs.onclick=next;
-bq.onclick=()=>{if(confirm("Arrêter la séance ?")){clearInterval(iv);tm.className="";wl(false);try{speechSynthesis.cancel()}catch(e){}}};
+bq.onclick=()=>{if(confirm("Arrêter la séance ?")){clearInterval(iv);tm.className="";wl(false);stopSay()}};
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState=="visible"&&tm.classList.contains("on"))wl(true)});
 </script></body></html>
